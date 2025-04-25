@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warehouse Inventory Locator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 300px;
+      font-size: 16px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏢 Warehouse Inventory Locator</h1>
+  <p>Enter an item code to find its location:</p>
+  <input type="text" id="searchBox" placeholder="e.g. APH">
+  <div id="result"></div>
+
+  <script>
+    async function loadCSV() {
+      const response = await fetch('warehouse_inventory_map.csv');
+      const text = await response.text();
+      const rows = text.split('\n').slice(1);
+      const inventory = rows.map(row => {
+        const [item, aisle, level] = row.split(',');
+        return { item, aisle, level };
+      });
+      return inventory;
+    }
+
+    document.getElementById("searchBox").addEventListener("input", async function () {
+      const query = this.value.trim().toUpperCase();
+      const inventory = await loadCSV();
+      const match = inventory.find(entry => entry.item === query);
+
+      const resultBox = document.getElementById("result");
+      if (match) {
+        resultBox.textContent = `✅ Found: Aisle ${match.aisle} | Level: ${match.level}`;
+      } else {
+        resultBox.textContent = query.length > 0 ? "⚠️ Item not found" : "";
+      }
+    });
+  </script>
+</body>
+</html>
