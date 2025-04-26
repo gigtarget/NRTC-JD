@@ -107,7 +107,7 @@
     const svg = document.getElementById("aisles");
 
     const totalAisles = Object.keys(aisleConfig).length;
-    const dynamicViewBoxWidth = totalAisles * aisleSpacing + 100;
+    const dynamicViewBoxWidth = totalAisles * aisleSpacing;
     svg.setAttribute("viewBox", `0 0 ${dynamicViewBoxWidth} 550`);
 
     function drawSections() {
