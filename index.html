@@ -14,7 +14,7 @@
     }
 
     h1 {
-      font-size: 44px;
+      font-size: 28px;
       margin-bottom: 10px;
     }
 
@@ -36,14 +36,14 @@
 
     .map-wrapper {
       overflow-x: auto;
-      padding: 10px;
-      margin-top: 10px;
+      padding: 20px;
+      margin-top: 20px;
     }
 
     svg {
       background: white;
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       width: 100%;
@@ -70,7 +70,7 @@
 
     @media (max-width: 600px) {
       h1 {
-        font-size: 20px;
+        font-size: 22px;
       }
       #result {
         font-size: 14px;
@@ -98,16 +98,16 @@
       F: { front: 4, back: 12 },
       G: { front: 4, back: 12 },
       H: { front: 4, back: 12 },
-      I: { front: 4, back: 12 }
+      I: { front: 4, back: 12 },
+      J: { front: 1, back: 0 }
     };
 
-    const aisleSpacing = 85;     // More space per aisle
-    const sectionSize = 20;      // Bigger red boxes
-    const padding = 2;           // Gap between left/right
-    const offsetX = 30;          // Left offset
+    const aisleSpacing = 85;
+    const sectionSize = 20;
+    const padding = 2;
+    const offsetX = 30;
     const svg = document.getElementById("aisles");
 
-    // Dynamically set SVG viewBox based on number of aisles
     const totalAisles = Object.keys(aisleConfig).length;
     const dynamicViewBoxWidth = totalAisles * aisleSpacing + 100;
     svg.setAttribute("viewBox", `0 0 ${dynamicViewBoxWidth} 550`);
@@ -135,7 +135,7 @@
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
-            rect.setAttribute("id", `${aisle}-Top-BW-${side}-${i + 1}`);
+            rect.setAttribute("id", `${aisle}-Top-BeforeWalkway-${side}-${i + 1}`);
             svg.appendChild(rect);
           });
         }
@@ -149,7 +149,7 @@
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
-            rect.setAttribute("id", `${aisle}-Top-AW-${side}-${i + 1}`);
+            rect.setAttribute("id", `${aisle}-Top-AfterWalkway-${side}-${i + 1}`);
             svg.appendChild(rect);
           });
         }
@@ -168,7 +168,7 @@
       const text = await response.text();
       const rows = text.split("\n").slice(1);
       const data = rows.map(row => {
-        const [code, aisle, level, block, side, section] = row.split(",");
+        const [code, aisle, level, block, side, section] = row.split(",").map(s => s.trim());
         return { code, aisle, level, block, side, section };
       });
 
@@ -178,13 +178,24 @@
 
       if (match) {
         const { aisle, level, block, side, section } = match;
-        const id = (!block || !side || !section)
-          ? aisle
-          : `${aisle}-${level}-${block.replace(/ /g, '')}-${side}-${section}`;
-        const el = document.getElementById(id);
-        if (el) el.classList.add("highlight");
+        let highlightId = "";
+        let message = `✅ Found: Aisle ${aisle}`;
 
-        resultBox.textContent = `✅ Found: Aisle ${aisle} ${section ? `| Section ${section} ${side}, ${block}` : ''}`;
+        if (level && block && side && section) {
+          highlightId = `${aisle}-${level}-${block.replace(/\s/g, '')}-${side}-${section}`;
+          message += ` | Level: ${level}, ${block}, ${side}, Section ${section}`;
+        } else {
+          highlightId = null;
+          document.querySelectorAll(`[id^="${aisle}-"]`).forEach(el => el.classList.add("highlight"));
+          message += " | (No exact location, highlighted entire aisle)";
+        }
+
+        if (highlightId) {
+          const el = document.getElementById(highlightId);
+          if (el) el.classList.add("highlight");
+        }
+
+        resultBox.textContent = message;
       } else {
         resultBox.textContent = "⚠️ Item not found";
       }
