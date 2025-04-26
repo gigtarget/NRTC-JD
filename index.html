@@ -20,6 +20,30 @@
       font-size: 18px;
       font-weight: bold;
     }
+    .map-container {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    svg {
+      width: 100%;
+      max-width: 700px;
+    }
+    .highlight {
+      fill: yellow !important;
+      stroke: black;
+      stroke-width: 2;
+    }
+    .rack {
+      fill: white;
+      stroke: red;
+      stroke-width: 1;
+    }
+    .aisle-label {
+      font-size: 12px;
+      fill: black;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -27,6 +51,40 @@
   <p>Enter an item code to find its location:</p>
   <input type="text" id="searchBox" placeholder="e.g. APH">
   <div id="result"></div>
+
+  <div class="map-container">
+    <!-- Simplified layout SVG: Rects for Aisles A-J -->
+    <svg viewBox="0 0 900 400">
+      <g id="map">
+        <!-- Aisles A to I -->
+        <g id="aisles">
+          <rect x="20" y="20" width="30" height="100" class="rack" id="A"></rect>
+          <rect x="60" y="20" width="30" height="100" class="rack" id="B"></rect>
+          <rect x="100" y="20" width="30" height="100" class="rack" id="C"></rect>
+          <rect x="160" y="20" width="30" height="200" class="rack" id="D"></rect>
+          <rect x="200" y="20" width="30" height="200" class="rack" id="E"></rect>
+          <rect x="240" y="20" width="30" height="200" class="rack" id="F"></rect>
+          <rect x="280" y="20" width="30" height="200" class="rack" id="G"></rect>
+          <rect x="320" y="20" width="30" height="200" class="rack" id="H"></rect>
+          <rect x="360" y="20" width="30" height="200" class="rack" id="I"></rect>
+        </g>
+        <!-- Aisle J (Bottom) -->
+        <rect x="20" y="250" width="370" height="40" class="rack" id="J"></rect>
+        
+        <!-- Aisle labels -->
+        <text x="25" y="15" class="aisle-label">A</text>
+        <text x="65" y="15" class="aisle-label">B</text>
+        <text x="105" y="15" class="aisle-label">C</text>
+        <text x="165" y="15" class="aisle-label">D</text>
+        <text x="205" y="15" class="aisle-label">E</text>
+        <text x="245" y="15" class="aisle-label">F</text>
+        <text x="285" y="15" class="aisle-label">G</text>
+        <text x="325" y="15" class="aisle-label">H</text>
+        <text x="365" y="15" class="aisle-label">I</text>
+        <text x="25" y="245" class="aisle-label">J</text>
+      </g>
+    </svg>
+  </div>
 
   <script>
     async function loadCSV() {
@@ -40,13 +98,23 @@
       return inventory;
     }
 
+    function clearHighlights() {
+      document.querySelectorAll('.rack').forEach(el => {
+        el.classList.remove('highlight');
+      });
+    }
+
     document.getElementById("searchBox").addEventListener("input", async function () {
       const query = this.value.trim().toUpperCase();
       const inventory = await loadCSV();
       const match = inventory.find(entry => entry.item === query);
 
       const resultBox = document.getElementById("result");
+      clearHighlights();
+
       if (match) {
+        const aisleElement = document.getElementById(match.aisle);
+        if (aisleElement) aisleElement.classList.add("highlight");
         resultBox.textContent = `✅ Found: Aisle ${match.aisle} | Level: ${match.level}`;
       } else {
         resultBox.textContent = query.length > 0 ? "⚠️ Item not found" : "";
