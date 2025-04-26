@@ -27,17 +27,17 @@
     }
     svg {
       width: 100%;
-      max-width: 700px;
+      max-width: 900px;
     }
     .highlight {
       fill: yellow !important;
       stroke: black;
       stroke-width: 2;
     }
-    .rack {
+    .section {
       fill: white;
       stroke: red;
-      stroke-width: 1;
+      stroke-width: 0.5;
     }
     .aisle-label {
       font-size: 12px;
@@ -53,35 +53,41 @@
   <div id="result"></div>
 
   <div class="map-container">
-    <!-- Simplified layout SVG: Rects for Aisles A-J -->
-    <svg viewBox="0 0 900 400">
+    <svg viewBox="0 0 1000 500">
       <g id="map">
-        <!-- Aisles A to I -->
-        <g id="aisles">
-          <rect x="20" y="20" width="30" height="100" class="rack" id="A"></rect>
-          <rect x="60" y="20" width="30" height="100" class="rack" id="B"></rect>
-          <rect x="100" y="20" width="30" height="100" class="rack" id="C"></rect>
-          <rect x="160" y="20" width="30" height="200" class="rack" id="D"></rect>
-          <rect x="200" y="20" width="30" height="200" class="rack" id="E"></rect>
-          <rect x="240" y="20" width="30" height="200" class="rack" id="F"></rect>
-          <rect x="280" y="20" width="30" height="200" class="rack" id="G"></rect>
-          <rect x="320" y="20" width="30" height="200" class="rack" id="H"></rect>
-          <rect x="360" y="20" width="30" height="200" class="rack" id="I"></rect>
+        <!-- Aisles A to I with divided sections (front + back) -->
+        <!-- Example: Aisle F front: 4 sections, back: 12 sections -->
+        <!-- Sections are 10px wide x 20px tall -->
+        <!-- Generate all sections with IDs like F-Top-BW-1 to F-Top-AW-12 -->
+
+        <!-- Sample for Aisle F (Top) split -->
+        <g id="F">
+          <!-- Front (Before Walkway) -->
+          <g id="F-Top-BW">
+            <rect x="300" y="20" width="10" height="20" class="section" id="F-Top-BW-1" />
+            <rect x="312" y="20" width="10" height="20" class="section" id="F-Top-BW-2" />
+            <rect x="324" y="20" width="10" height="20" class="section" id="F-Top-BW-3" />
+            <rect x="336" y="20" width="10" height="20" class="section" id="F-Top-BW-4" />
+          </g>
+          <!-- Back (After Walkway) -->
+          <g id="F-Top-AW">
+            <!-- 12 sections -->
+            <rect x="300" y="45" width="10" height="20" class="section" id="F-Top-AW-1" />
+            <rect x="312" y="45" width="10" height="20" class="section" id="F-Top-AW-2" />
+            <rect x="324" y="45" width="10" height="20" class="section" id="F-Top-AW-3" />
+            <rect x="336" y="45" width="10" height="20" class="section" id="F-Top-AW-4" />
+            <rect x="348" y="45" width="10" height="20" class="section" id="F-Top-AW-5" />
+            <rect x="360" y="45" width="10" height="20" class="section" id="F-Top-AW-6" />
+            <rect x="372" y="45" width="10" height="20" class="section" id="F-Top-AW-7" />
+            <rect x="384" y="45" width="10" height="20" class="section" id="F-Top-AW-8" />
+            <rect x="396" y="45" width="10" height="20" class="section" id="F-Top-AW-9" />
+            <rect x="408" y="45" width="10" height="20" class="section" id="F-Top-AW-10" />
+            <rect x="420" y="45" width="10" height="20" class="section" id="F-Top-AW-11" />
+            <rect x="432" y="45" width="10" height="20" class="section" id="F-Top-AW-12" />
+          </g>
         </g>
-        <!-- Aisle J (Bottom) -->
-        <rect x="20" y="250" width="370" height="40" class="rack" id="J"></rect>
-        
-        <!-- Aisle labels -->
-        <text x="25" y="15" class="aisle-label">A</text>
-        <text x="65" y="15" class="aisle-label">B</text>
-        <text x="105" y="15" class="aisle-label">C</text>
-        <text x="165" y="15" class="aisle-label">D</text>
-        <text x="205" y="15" class="aisle-label">E</text>
-        <text x="245" y="15" class="aisle-label">F</text>
-        <text x="285" y="15" class="aisle-label">G</text>
-        <text x="325" y="15" class="aisle-label">H</text>
-        <text x="365" y="15" class="aisle-label">I</text>
-        <text x="25" y="245" class="aisle-label">J</text>
+        <!-- Aisle label -->
+        <text x="300" y="15" class="aisle-label">F</text>
       </g>
     </svg>
   </div>
@@ -92,14 +98,14 @@
       const text = await response.text();
       const rows = text.split('\n').slice(1);
       const inventory = rows.map(row => {
-        const [item, aisle, level] = row.split(',');
-        return { item, aisle, level };
+        const [item, aisle, level, section, block] = row.split(',');
+        return { item, aisle, level, section, block };
       });
       return inventory;
     }
 
     function clearHighlights() {
-      document.querySelectorAll('.rack').forEach(el => {
+      document.querySelectorAll('.section').forEach(el => {
         el.classList.remove('highlight');
       });
     }
@@ -113,9 +119,16 @@
       clearHighlights();
 
       if (match) {
-        const aisleElement = document.getElementById(match.aisle);
-        if (aisleElement) aisleElement.classList.add("highlight");
-        resultBox.textContent = `✅ Found: Aisle ${match.aisle} | Level: ${match.level}`;
+        const { aisle, level, section, block } = match;
+        if (section && block) {
+          const sectionId = `${aisle}-${level}-${block.trim().replace(/ /g, '')}-${section}`;
+          const el = document.getElementById(sectionId);
+          if (el) el.classList.add("highlight");
+        } else {
+          // highlight whole aisle
+          document.querySelectorAll(`#${aisle} .section`).forEach(el => el.classList.add("highlight"));
+        }
+        resultBox.textContent = `✅ Found: Aisle ${aisle} | Level: ${level}${section ? ` | Section ${section}` : ''}${block ? ` | ${block}` : ''}`;
       } else {
         resultBox.textContent = query.length > 0 ? "⚠️ Item not found" : "";
       }
