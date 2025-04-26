@@ -62,14 +62,6 @@
   <input id="searchBox" type="text" placeholder="e.g. LCQ" />
   <div id="result"></div>
 
-  <div class="map-wrapper">
-    <svg viewBox="0 0 950 750">
-      <!-- Walkway -->
-      //<rect x="0" y="350" width="950" height="40" class="walkway" />
-      <g id="aisles"></g>
-    </svg>
-  </div>
-
   <script>
     const aisleConfig = {
       A: { front: 3, back: 9 },
@@ -109,7 +101,7 @@
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-            rect.setAttribute("y", 20 + i * (sectionSize + padding));
+            rect.setAttribute("y", 40 + i * (sectionSize + padding));
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
