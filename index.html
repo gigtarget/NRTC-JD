@@ -62,6 +62,11 @@
   <input id="searchBox" type="text" placeholder="e.g. LCQ" />
   <div id="result"></div>
 
+  <!-- MISSING SVG added here -->
+  <div class="map-wrapper">
+    <svg id="aisles" width="1000" height="1000"></svg>
+  </div>
+
   <script>
     const aisleConfig = {
       A: { front: 3, back: 9 },
@@ -124,17 +129,17 @@
           });
         }
 
-// if (aisle === 'J') {
-//   const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-//   rect.setAttribute("x", 100);
-//   rect.setAttribute("y", 680);
-//   rect.setAttribute("width", 750);
-//   rect.setAttribute("height", 30);
-//   rect.setAttribute("class", "section");
-//   rect.setAttribute("id", "J-Full");
-//   svg.appendChild(rect);
-// }
-
+        // Aisle J special case (you commented this out earlier)
+        if (aisle === 'J') {
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", 680);
+          rect.setAttribute("width", 40);
+          rect.setAttribute("height", 30);
+          rect.setAttribute("class", "section");
+          rect.setAttribute("id", "J-Full");
+          svg.appendChild(rect);
+        }
 
         index++;
       }
