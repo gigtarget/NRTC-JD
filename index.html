@@ -5,18 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Warehouse Section Locator</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+    }
     input[type="text"] {
-      padding: 10px; font-size: 16px; width: 300px;
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
     }
-    #result { margin-top: 10px; font-size: 18px; font-weight: bold; }
-    svg { max-width: 100%; margin-top: 20px; }
+    #result {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .map-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    svg {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
     .section {
-      fill: white; stroke: red; stroke-width: 0.5;
+      fill: white;
+      stroke: red;
+      stroke-width: 0.5;
     }
-    .highlight { fill: yellow !important; stroke: black; stroke-width: 1.5; }
-    .walkway { fill: #32cd32; opacity: 0.4; }
-    .aisle-label { font-size: 10px; font-weight: bold; fill: black; }
+    .highlight {
+      fill: yellow !important;
+      stroke: black;
+      stroke-width: 1.5;
+    }
+    .walkway {
+      fill: #a3e6a3;
+      opacity: 1;
+    }
+    .aisle-label {
+      font-size: 10px;
+      font-weight: bold;
+      fill: black;
+    }
   </style>
 </head>
 <body>
@@ -25,11 +62,13 @@
   <input id="searchBox" type="text" placeholder="e.g. LCQ" />
   <div id="result"></div>
 
-  <svg viewBox="0 0 1000 700">
-    <!-- Walkway -->
-    <rect x="0" y="330" width="1000" height="40" class="walkway" />
-    <g id="aisles"></g>
-  </svg>
+  <div class="map-wrapper">
+    <svg viewBox="0 0 950 750">
+      <!-- Walkway -->
+      <rect x="0" y="350" width="950" height="40" class="walkway" />
+      <g id="aisles"></g>
+    </svg>
+  </div>
 
   <script>
     const aisleConfig = {
@@ -45,10 +84,10 @@
       J: { front: 1, back: 0 }
     };
 
-    const aisleSpacing = 85;
+    const aisleSpacing = 70;
     const sectionSize = 12;
     const padding = 1.5;
-    const offsetX = 60;
+    const offsetX = 40;
     const svg = document.getElementById("aisles");
 
     function drawSections() {
@@ -84,7 +123,7 @@
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-            rect.setAttribute("y", 380 + i * (sectionSize + padding));
+            rect.setAttribute("y", 400 + i * (sectionSize + padding));
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
@@ -97,8 +136,8 @@
         if (aisle === 'J') {
           const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
           rect.setAttribute("x", 100);
-          rect.setAttribute("y", 650);
-          rect.setAttribute("width", 800);
+          rect.setAttribute("y", 680);
+          rect.setAttribute("width", 750);
           rect.setAttribute("height", 30);
           rect.setAttribute("class", "section");
           rect.setAttribute("id", "J-Full");
