@@ -47,7 +47,6 @@
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 550px;  /* 👈 reduce this */
       height: auto;
     }
 
@@ -86,8 +85,7 @@
   <div id="result"></div>
 
   <div class="map-wrapper">
-    <!-- SVG is now responsive -->
-    <svg id="aisles" viewBox="0 0 1000 600" preserveAspectRatio="xMinYMin meet"></svg>
+    <svg id="aisles" preserveAspectRatio="xMinYMin meet"></svg>
   </div>
 
   <script>
@@ -104,11 +102,16 @@
       J: { front: 1, back: 0 }
     };
 
-    const aisleSpacing = 70;
-    const sectionSize = 12;
-    const padding = 1.5;
-    const offsetX = 40;
+    const aisleSpacing = 85;     // More space per aisle
+    const sectionSize = 20;      // Bigger red boxes
+    const padding = 2;           // Gap between left/right
+    const offsetX = 30;          // Left offset
     const svg = document.getElementById("aisles");
+
+    // Dynamically set SVG viewBox based on number of aisles
+    const totalAisles = Object.keys(aisleConfig).length;
+    const dynamicViewBoxWidth = totalAisles * aisleSpacing + 100;
+    svg.setAttribute("viewBox", `0 0 ${dynamicViewBoxWidth} 550`);
 
     function drawSections() {
       let index = 0;
@@ -143,7 +146,7 @@
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-            rect.setAttribute("y", 130 + i * (sectionSize + padding));
+            rect.setAttribute("y", 160 + i * (sectionSize + padding));
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
