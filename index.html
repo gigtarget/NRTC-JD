@@ -4,385 +4,185 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Warehouse Section Locator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #0052cc; /* Professional Blue */
-      --secondary-color: #f4f5f7; /* Light Gray Background */
-      --border-color: #dfe1e6; /* Subtle Border Color */
-      --text-color: #172b4d; /* Dark Text */
-      --text-light: #505f79; /* Lighter Text */
-      --highlight-color: #ffe380; /* Softer Yellow Highlight */
-      --highlight-stroke: #ffc400; /* Highlight Border */
-      --success-color: #00875a; /* Green for Found */
-      --error-color: #de350b; /* Red for Not Found */
-      --walkway-color: #e0e0e0; /* Neutral Walkway */
-      --section-fill: #ffffff; /* White Section Fill */
-      --section-stroke: #c1c7d0; /* Grayish Section Border */
-      --font-family: 'Inter', sans-serif;
-      --container-width: 1200px;
-    }
-
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
     body {
-      font-family: var(--font-family);
-      background-color: var(--secondary-color);
-      color: var(--text-color);
-      line-height: 1.6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
       padding: 20px;
+      background: #f9f9f9;
     }
-
-    .container {
-        background-color: #ffffff;
-        padding: 30px 40px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: var(--container-width);
-        text-align: center;
-    }
-
-    header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 25px;
-        gap: 15px; /* Space between icon and title */
-    }
-
-    header h1 {
-        font-size: 2em; /* Slightly larger title */
-        font-weight: 700;
-        color: var(--text-color);
-    }
-
-    /* Style the original factory icon a bit */
-    header img {
-        height: 40px; /* Adjust size */
-        vertical-align: middle;
-    }
-
-    .search-area {
-        margin-bottom: 30px;
-    }
-
-    .search-area label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: var(--text-light);
-        font-size: 0.9em;
-    }
-
     input[type="text"] {
-      padding: 12px 15px;
-      font-size: 1em;
-      width: 100%;
-      max-width: 400px; /* Limit input width */
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      font-family: var(--font-family);
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
     }
-    input[type="text"]:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2); /* Focus ring */
-    }
-
     #result {
-      margin-top: 15px;
-      font-size: 1.1em;
-      font-weight: 500;
-      min-height: 25px; /* Prevent layout shift */
-      transition: color 0.3s ease;
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
     }
-    #result.found {
-        color: var(--success-color);
-    }
-    #result.error {
-        color: var(--error-color);
-    }
-
     .map-wrapper {
-      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
       margin-top: 20px;
-      overflow-x: auto; /* Allow horizontal scroll on small screens if needed */
     }
-
     svg {
-      display: block; /* Remove extra space below SVG */
-      margin: 0 auto; /* Center SVG if wrapper is wider */
-      background: #ffffff; /* Keep SVG background white */
-      /* Removed border/padding/shadow from SVG - container handles it */
-      max-width: 100%; /* Ensure SVG scales down */
-      height: auto; /* Maintain aspect ratio */
+      background: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-
     .section {
-      fill: var(--section-fill);
-      stroke: var(--section-stroke);
+      fill: white;
+      stroke: red;
       stroke-width: 0.5;
-      transition: fill 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease; /* Smooth transitions */
     }
-    .section:hover { /* Subtle hover effect */
-        stroke: var(--primary-color);
-        stroke-width: 0.8;
-    }
-
     .highlight {
-      fill: var(--highlight-color) !important;
-      stroke: var(--highlight-stroke) !important;
-      stroke-width: 1.5 !important;
+      fill: yellow !important;
+      stroke: black;
+      stroke-width: 1.5;
     }
-
     .walkway {
-      fill: var(--walkway-color);
-      stroke: none; /* No border for walkway */
+      fill: #a3e6a3;
+      opacity: 1;
     }
-
     .aisle-label {
-      font-size: 11px; /* Slightly larger label */
-      font-weight: 500;
-      fill: var(--text-light);
-      text-anchor: middle; /* Center label above aisle */
-      font-family: var(--font-family);
+      font-size: 10px;
+      font-weight: bold;
+      fill: black;
     }
   </style>
 </head>
 <body>
+  <h1>🏭 Warehouse Section Locator</h1>
+  <p>Enter Item Code:</p>
+  <input id="searchBox" type="text" placeholder="e.g. LCQ" />
+  <div id="result"></div>
 
-  <div class="container">
-    <header>
-      <!-- You can use an actual SVG icon here if preferred -->
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAbQAAAG0B5Nlb+AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGwSURBVFiFvdfPSxRhFAfwz707d5eFkKCpXUpU/Al0EkSKDDL0YxDspClCKIIKogQRRBcNghtdXBpK+AlEb0YQxIKCCKGIECWoKFoU4S5877C7s7uwEJOwu7MDz94Xhg97P/PBfO+T6UwpRSpl4S7UdECvUaAVqNUAVpRSy8V77gL1CgC/kLYS5CmG877G7/dAJ0Gg3wB0U/E3eN7hHwXgB8DTGv9XwDqAUg1g/aW0bTj/73WfBqA9+70vR8YhU9OQCWc+6P0eAE4APw0g2wF/gN8DX6/jj/G0J3W4/M0A7wM/A+gJdLfN48L/Q/u6C0tqN0/1A/gGfKppK8pvr32bU+t+VqN/2+0XgGMA/9U4A3gT+C793Lg7gN+/EwBdgX/D/0/B5+9pAF+AY4B/p/7w9R3wH/gX+M3hXwM4AvgD/A8A30V9t7bA7wG8BWxj3wUAPwL/jP5nAI4AHx/8/w9gBpgBbv+/N05OADOAU4AXwFn0z9tYg79vAfwFnAF8/912LgXmAacXAAAAAElFTkSuQmCC" alt="Warehouse Icon">
-      <h1>Warehouse Section Locator</h1>
-    </header>
-
-    <div class="search-area">
-      <label for="searchBox">Enter Item Code:</label>
-      <input id="searchBox" type="text" placeholder="e.g. LCQ" />
-      <div id="result">Enter a code to locate its section.</div> <!-- Initial message -->
-    </div>
-
-    <div class="map-wrapper">
-      <!-- Adjusted viewBox for better spacing and accommodating labels -->
-      <svg viewBox="0 0 950 650">
-        <!-- Walkway -->
-        <rect x="0" y="250" width="950" height="40" class="walkway" />
-        <g id="aisles"></g>
-      </svg>
-    </div>
+  <div class="map-wrapper">
+    <svg viewBox="0 0 950 750">
+      <!-- Walkway -->
+      <rect x="0" y="350" width="950" height="40" class="walkway" />
+      <g id="aisles"></g>
+    </svg>
   </div>
 
   <script>
     const aisleConfig = {
-      A: { front: 3, back: 9 }, B: { front: 3, back: 9 }, C: { front: 3, back: 9 },
-      D: { front: 4, back: 12 }, E: { front: 4, back: 12 }, F: { front: 4, back: 12 },
-      G: { front: 4, back: 12 }, H: { front: 4, back: 12 }, I: { front: 4, back: 12 },
-      J: { front: 1, back: 0 } // Simplified J config for this layout
+      A: { front: 3, back: 9 },
+      B: { front: 3, back: 9 },
+      C: { front: 3, back: 9 },
+      D: { front: 4, back: 12 },
+      E: { front: 4, back: 12 },
+      F: { front: 4, back: 12 },
+      G: { front: 4, back: 12 },
+      H: { front: 4, back: 12 },
+      I: { front: 4, back: 12 },
+      J: { front: 1, back: 0 }
     };
 
-    const aisleSpacing = 80; // Increased spacing
-    const sectionSize = 15; // Increased section size
-    const padding = 2;      // Increased padding
-    const offsetX = 50;     // Adjusted offset
-    const startYFront = 50; // Starting Y for front sections
-    const startYBack = 300; // Starting Y for back sections (after walkway)
+    const aisleSpacing = 70;
+    const sectionSize = 12;
+    const padding = 1.5;
+    const offsetX = 40;
     const svg = document.getElementById("aisles");
-    const resultBox = document.getElementById("result");
-    const searchBox = document.getElementById("searchBox");
-    let inventoryData = null; // Cache for fetched data
 
     function drawSections() {
-      svg.innerHTML = ''; // Clear previous drawing
       let index = 0;
-      const totalWidth = offsetX + Object.keys(aisleConfig).length * aisleSpacing;
-
       for (let aisle in aisleConfig) {
         const { front, back } = aisleConfig[aisle];
-        // Calculate X position centered within its allocated space
-        const baseX = offsetX + index * aisleSpacing;
-        const aisleWidth = sectionSize * 2 + padding; // Width of the two columns
-        const x = baseX + (aisleSpacing - aisleWidth) / 2; // Center the blocks within the spacing
+        const x = offsetX + index * aisleSpacing;
 
-        // Aisle Label
+        // Label
         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        label.setAttribute("x", x + aisleWidth / 2); // Center text
-        label.setAttribute("y", startYFront - 20); // Position above sections
+        label.setAttribute("x", x + sectionSize);
+        label.setAttribute("y", 20);
         label.setAttribute("class", "aisle-label");
         label.textContent = aisle;
         svg.appendChild(label);
 
-        // FRONT Sections (Before Walkway)
+        // FRONT (Before Walkway)
         for (let i = 0; i < front; i++) {
           ["Left", "Right"].forEach((side, sIndex) => {
-            if (aisle === 'J' && front === 1 && sIndex === 1) return; // Only draw one block for J front if front=1
-
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-            rect.setAttribute("y", startYFront + i * (sectionSize + padding));
+            rect.setAttribute("y", 40 + i * (sectionSize + padding));
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
-            // Adjusted ID format slightly for consistency (BW = Before Walkway)
             rect.setAttribute("id", `${aisle}-Top-BW-${side}-${i + 1}`);
             svg.appendChild(rect);
           });
         }
 
-        // BACK Sections (After Walkway)
+        // BACK (After Walkway)
         for (let i = 0; i < back; i++) {
-             ["Left", "Right"].forEach((side, sIndex) => {
-                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-                rect.setAttribute("y", startYBack + i * (sectionSize + padding)); // Adjusted Y for back
-                rect.setAttribute("width", sectionSize);
-                rect.setAttribute("height", sectionSize);
-                rect.setAttribute("class", "section");
-                // Adjusted ID format slightly for consistency (AW = After Walkway)
-                rect.setAttribute("id", `${aisle}-Top-AW-${side}-${i + 1}`);
-                svg.appendChild(rect);
-            });
+          ["Left", "Right"].forEach((side, sIndex) => {
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x + sIndex * (sectionSize + padding));
+            rect.setAttribute("y", 400 + i * (sectionSize + padding));
+            rect.setAttribute("width", sectionSize);
+            rect.setAttribute("height", sectionSize);
+            rect.setAttribute("class", "section");
+            rect.setAttribute("id", `${aisle}-Top-AW-${side}-${i + 1}`);
+            svg.appendChild(rect);
+          });
         }
 
-        // Special handling for Aisle J - If it's supposed to be a full block, draw it differently
-        // This example assumes J remains mostly column-based based on config.
-        // If J needs a single large block, the drawing logic here would need significant change.
-        // The previous 'J-Full' logic seemed disconnected from the config.
+        // Aisle J only full block
+        if (aisle === 'J') {
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", 100);
+          rect.setAttribute("y", 680);
+          rect.setAttribute("width", 750);
+          rect.setAttribute("height", 30);
+          rect.setAttribute("class", "section");
+          rect.setAttribute("id", "J-Full");
+          svg.appendChild(rect);
+        }
 
         index++;
       }
-        // Adjust SVG viewBox dynamically based on calculated width and height
-        // Find max Y position
-        const maxYBack = startYBack + Math.max(...Object.values(aisleConfig).map(c => c.back)) * (sectionSize + padding);
-        const svgHeight = Math.max(350, maxYBack + 20); // Ensure minimum height, add padding
-        const svgWidth = totalWidth + offsetX; // Add padding at the end
-
-        svg.parentElement.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
-
     }
 
     function clearHighlights() {
-      document.querySelectorAll(".section.highlight").forEach(el => el.classList.remove("highlight"));
+      document.querySelectorAll(".section").forEach(el => el.classList.remove("highlight"));
     }
-
-    async function loadInventory() {
-        // Only fetch if data hasn't been loaded yet
-        if (!inventoryData) {
-            try {
-                const response = await fetch("warehouse_inventory_map.csv");
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const text = await response.text();
-                const rows = text.split("\n").slice(1); // Skip header
-                inventoryData = rows.map(row => {
-                    const columns = row.split(",");
-                    // Check if row has enough columns before destructuring
-                    if (columns.length >= 6) {
-                        const [code, aisle, level, block, side, section] = columns.map(s => s.trim()); // Trim whitespace
-                        return { code, aisle, level, block, side, section };
-                    }
-                    return null; // Indicate invalid row
-                }).filter(row => row && row.code); // Filter out invalid/empty rows
-                console.log("Inventory loaded:", inventoryData.length, "items");
-            } catch (error) {
-                console.error("Failed to load inventory:", error);
-                resultBox.textContent = "❌ Error loading inventory data.";
-                resultBox.className = 'error';
-                inventoryData = []; // Prevent repeated attempts on error
-            }
-        }
-        return inventoryData;
-    }
-
 
     async function searchItem() {
-      const query = searchBox.value.trim().toUpperCase();
-      resultBox.textContent = ""; // Clear previous result
-      resultBox.className = ''; // Clear status classes
+      const query = document.getElementById("searchBox").value.trim().toUpperCase();
+      const response = await fetch("warehouse_inventory_map.csv");
+      const text = await response.text();
+      const rows = text.split("\n").slice(1);
+      const data = rows.map(row => {
+        const [code, aisle, level, block, side, section] = row.split(",");
+        return { code, aisle, level, block, side, section };
+      });
+
+      const resultBox = document.getElementById("result");
       clearHighlights();
-
-      if (!query) {
-        resultBox.textContent = "Enter a code to locate its section.";
-        return;
-      }
-
-      const data = await loadInventory(); // Ensure data is loaded
-
-      if (data === null || data.length === 0) {
-          if (resultBox.textContent === "") { // Avoid overwriting load error message
-              resultBox.textContent = "⚠️ Inventory data not available.";
-              resultBox.className = 'error';
-          }
-          return;
-      }
-
-
-      // console.log("Searching for:", query); // Debugging line
       const match = data.find(r => r.code === query);
 
       if (match) {
         const { aisle, level, block, side, section } = match;
-        // console.log("Match found:", match); // Debugging line
-
-        // Construct ID based on Before Walkway (BW) or After Walkway (AW)
-        // Assuming 'Block' column indicates 'BW' or 'AW' (modify if needed)
-        // If block info isn't BW/AW, you might need to infer based on section number or add it to CSV.
-        // For this example, let's ASSUME 'BW'/'AW' is in the 'block' field or can be derived.
-        // *** This ID construction is CRITICAL and must match drawSections() ***
-        // Let's assume 'Block' contains "BW" or "AW" directly for simplicity here.
-        // If not, you need logic: e.g., if section number > certain value, it's AW.
-        const blockIndicator = block; // Directly use 'block' field - ADJUST IF CSV IS DIFFERENT
-
-        const id = `${aisle}-${level}-${blockIndicator}-${side}-${section}`;
+        const id = (aisle === 'J' || !block || !side || !section)
+          ? (aisle === 'J' ? 'J-Full' : aisle)
+          : `${aisle}-${level}-${block.replace(/ /g, '')}-${side}-${section}`;
 
         const el = document.getElementById(id);
-        // console.log("Attempting to highlight ID:", id); // Debugging line
+        if (el) el.classList.add("highlight");
 
-        if (el) {
-          el.classList.add("highlight");
-          resultBox.textContent = `✅ Found: Aisle ${aisle}, Section ${section} (${side}, ${block})`;
-          resultBox.className = 'found';
-
-          // Optional: Scroll the highlighted element into view
-           el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-
-        } else {
-          console.warn("Element ID not found in SVG:", id); // Debugging line
-          resultBox.textContent = `⚠️ Item data found, but section ${id} could not be drawn/located on map.`;
-           resultBox.className = 'error';
-        }
-
+        resultBox.textContent = `✅ Found: Aisle ${aisle} ${section ? `| Section ${section} ${side}, ${block}` : ''}`;
       } else {
-        resultBox.textContent = "❌ Item code not found in inventory.";
-        resultBox.className = 'error';
+        resultBox.textContent = "⚠️ Item not found";
       }
     }
 
-    // Debounce search function to avoid excessive calls on rapid input
-    let searchTimeout;
-    searchBox.addEventListener("input", () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(searchItem, 300); // Wait 300ms after user stops typing
-    });
-
-    // Initial setup
+    document.getElementById("searchBox").addEventListener("input", searchItem);
     drawSections();
-    loadInventory(); // Pre-load inventory on page load
-
   </script>
 </body>
 </html>
