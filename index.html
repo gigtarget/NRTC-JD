@@ -6,53 +6,64 @@
   <title>Warehouse Section Locator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       margin: 0;
       padding: 20px;
-      background: #f9f9f9;
+      background: #f4f4f4;
     }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
     input[type="text"] {
       padding: 10px;
       font-size: 16px;
-      width: 300px;
+      width: 280px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
     }
+
     #result {
-      margin-top: 10px;
-      font-size: 18px;
+      margin-top: 12px;
+      font-size: 16px;
       font-weight: bold;
+      color: #2e7d32;
     }
+
     .map-wrapper {
       display: flex;
       justify-content: center;
       padding: 20px;
       margin-top: 20px;
     }
+
     svg {
       background: white;
       border: 1px solid #ccc;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+
     .section {
       fill: white;
       stroke: red;
-      stroke-width: 0.5;
+      stroke-width: 0.6;
     }
+
     .highlight {
       fill: yellow !important;
       stroke: black;
       stroke-width: 1.5;
     }
-    .walkway {
-      fill: #a3e6a3;
-      opacity: 1;
-    }
+
     .aisle-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: bold;
-      fill: black;
+      fill: #333;
     }
   </style>
 </head>
@@ -62,9 +73,8 @@
   <input id="searchBox" type="text" placeholder="e.g. LCQ" />
   <div id="result"></div>
 
-  <!-- MISSING SVG added here -->
   <div class="map-wrapper">
-    <svg id="aisles" width="1000" height="1000"></svg>
+    <svg id="aisles" width="850" height="520"></svg>
   </div>
 
   <script>
@@ -78,7 +88,7 @@
       G: { front: 4, back: 12 },
       H: { front: 4, back: 12 },
       I: { front: 4, back: 12 },
-      J: { front: 1, back: 0 }
+      J: { front: 1, back: 0 } // No visual box for J
     };
 
     const aisleSpacing = 70;
@@ -93,10 +103,10 @@
         const { front, back } = aisleConfig[aisle];
         const x = offsetX + index * aisleSpacing;
 
-        // Label
+        // Aisle Label
         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
         label.setAttribute("x", x + sectionSize);
-        label.setAttribute("y", 20);
+        label.setAttribute("y", 15);
         label.setAttribute("class", "aisle-label");
         label.textContent = aisle;
         svg.appendChild(label);
@@ -106,7 +116,7 @@
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-            rect.setAttribute("y", 40 + i * (sectionSize + padding));
+            rect.setAttribute("y", 30 + i * (sectionSize + padding));
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
@@ -120,25 +130,13 @@
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
-            rect.setAttribute("y", 150 + i * (sectionSize + padding));
+            rect.setAttribute("y", 130 + i * (sectionSize + padding));
             rect.setAttribute("width", sectionSize);
             rect.setAttribute("height", sectionSize);
             rect.setAttribute("class", "section");
             rect.setAttribute("id", `${aisle}-Top-AW-${side}-${i + 1}`);
             svg.appendChild(rect);
           });
-        }
-
-        // Aisle J special case (you commented this out earlier)
-        if (aisle === 'J') {
-          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-          rect.setAttribute("x", x);
-          rect.setAttribute("y", 680);
-          rect.setAttribute("width", 40);
-          rect.setAttribute("height", 30);
-          rect.setAttribute("class", "section");
-          rect.setAttribute("id", "J-Full");
-          svg.appendChild(rect);
         }
 
         index++;
@@ -165,10 +163,9 @@
 
       if (match) {
         const { aisle, level, block, side, section } = match;
-        const id = (aisle === 'J' || !block || !side || !section)
-          ? (aisle === 'J' ? 'J-Full' : aisle)
+        const id = (!block || !side || !section)
+          ? aisle
           : `${aisle}-${level}-${block.replace(/ /g, '')}-${side}-${section}`;
-
         const el = document.getElementById(id);
         if (el) el.classList.add("highlight");
 
