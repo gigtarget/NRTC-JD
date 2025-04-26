@@ -130,7 +130,7 @@
 
         // FRONT
         for (let i = 0; i < front; i++) {
-          ["Left", "Right"].forEach((side, sIndex) => {
+          ["Right", "Left"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
             rect.setAttribute("y", 30 + i * (sectionSize + padding));
@@ -144,7 +144,7 @@
 
         // BACK
         for (let i = 0; i < back; i++) {
-          ["Left", "Right"].forEach((side, sIndex) => {
+          ["Right", "Left"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", x + sIndex * (sectionSize + padding));
             rect.setAttribute("y", 160 + i * (sectionSize + padding));
