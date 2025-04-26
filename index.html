@@ -21,7 +21,8 @@
     input[type="text"] {
       padding: 10px;
       font-size: 16px;
-      width: 280px;
+      width: 80%;
+      max-width: 300px;
       border-radius: 4px;
       border: 1px solid #ccc;
     }
@@ -34,8 +35,7 @@
     }
 
     .map-wrapper {
-      display: flex;
-      justify-content: center;
+      overflow-x: auto;
       padding: 20px;
       margin-top: 20px;
     }
@@ -46,6 +46,8 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      height: auto;
     }
 
     .section {
@@ -65,6 +67,15 @@
       font-weight: bold;
       fill: #333;
     }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+      #result {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -74,7 +85,8 @@
   <div id="result"></div>
 
   <div class="map-wrapper">
-    <svg id="aisles" width="850" height="520"></svg>
+    <!-- SVG is now responsive -->
+    <svg id="aisles" viewBox="0 0 1000 600" preserveAspectRatio="xMinYMin meet"></svg>
   </div>
 
   <script>
@@ -88,7 +100,7 @@
       G: { front: 4, back: 12 },
       H: { front: 4, back: 12 },
       I: { front: 4, back: 12 },
-      J: { front: 1, back: 0 } // No visual box for J
+      J: { front: 1, back: 0 }
     };
 
     const aisleSpacing = 70;
@@ -111,7 +123,7 @@
         label.textContent = aisle;
         svg.appendChild(label);
 
-        // FRONT (Before Walkway)
+        // FRONT
         for (let i = 0; i < front; i++) {
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -125,7 +137,7 @@
           });
         }
 
-        // BACK (After Walkway)
+        // BACK
         for (let i = 0; i < back; i++) {
           ["Left", "Right"].forEach((side, sIndex) => {
             const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
