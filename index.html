@@ -1,138 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warehouse Inventory Locator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warehouse Section Locator</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; }
     input[type="text"] {
-      padding: 10px;
-      width: 300px;
-      font-size: 16px;
+      padding: 10px; font-size: 16px; width: 300px;
     }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .map-container {
-      margin-top: 40px;
-      display: flex;
-      justify-content: center;
-    }
-    svg {
-      width: 100%;
-      max-width: 900px;
-    }
-    .highlight {
-      fill: yellow !important;
-      stroke: black;
-      stroke-width: 2;
-    }
+    #result { margin-top: 10px; font-size: 18px; font-weight: bold; }
+    svg { max-width: 1000px; margin-top: 20px; border: 1px solid #ccc; }
     .section {
-      fill: white;
-      stroke: red;
-      stroke-width: 0.5;
+      fill: white; stroke: red; stroke-width: 0.5;
     }
-    .aisle-label {
-      font-size: 12px;
-      fill: black;
-      font-weight: bold;
-    }
+    .highlight { fill: yellow !important; stroke: black; stroke-width: 1.5; }
+    .walkway { fill: #32cd32; opacity: 0.4; }
+    .aisle-label { font-size: 10px; font-weight: bold; fill: black; }
   </style>
 </head>
 <body>
-  <h1>🏢 Warehouse Inventory Locator</h1>
-  <p>Enter an item code to find its location:</p>
-  <input type="text" id="searchBox" placeholder="e.g. APH">
+  <h1>🏭 Warehouse Section Locator</h1>
+  <p>Enter Item Code:</p>
+  <input id="searchBox" type="text" placeholder="e.g. LCQ" />
   <div id="result"></div>
 
-  <div class="map-container">
-    <svg viewBox="0 0 1000 500">
-      <g id="map">
-        <!-- Aisles A to I with divided sections (front + back) -->
-        <!-- Example: Aisle F front: 4 sections, back: 12 sections -->
-        <!-- Sections are 10px wide x 20px tall -->
-        <!-- Generate all sections with IDs like F-Top-BW-1 to F-Top-AW-12 -->
+  <svg viewBox="0 0 1000 600">
+    <!-- Walkway -->
+    <rect x="0" y="270" width="1000" height="60" class="walkway" />
 
-        <!-- Sample for Aisle F (Top) split -->
-        <g id="F">
-          <!-- Front (Before Walkway) -->
-          <g id="F-Top-BW">
-            <rect x="300" y="20" width="10" height="20" class="section" id="F-Top-BW-1" />
-            <rect x="312" y="20" width="10" height="20" class="section" id="F-Top-BW-2" />
-            <rect x="324" y="20" width="10" height="20" class="section" id="F-Top-BW-3" />
-            <rect x="336" y="20" width="10" height="20" class="section" id="F-Top-BW-4" />
-          </g>
-          <!-- Back (After Walkway) -->
-          <g id="F-Top-AW">
-            <!-- 12 sections -->
-            <rect x="300" y="45" width="10" height="20" class="section" id="F-Top-AW-1" />
-            <rect x="312" y="45" width="10" height="20" class="section" id="F-Top-AW-2" />
-            <rect x="324" y="45" width="10" height="20" class="section" id="F-Top-AW-3" />
-            <rect x="336" y="45" width="10" height="20" class="section" id="F-Top-AW-4" />
-            <rect x="348" y="45" width="10" height="20" class="section" id="F-Top-AW-5" />
-            <rect x="360" y="45" width="10" height="20" class="section" id="F-Top-AW-6" />
-            <rect x="372" y="45" width="10" height="20" class="section" id="F-Top-AW-7" />
-            <rect x="384" y="45" width="10" height="20" class="section" id="F-Top-AW-8" />
-            <rect x="396" y="45" width="10" height="20" class="section" id="F-Top-AW-9" />
-            <rect x="408" y="45" width="10" height="20" class="section" id="F-Top-AW-10" />
-            <rect x="420" y="45" width="10" height="20" class="section" id="F-Top-AW-11" />
-            <rect x="432" y="45" width="10" height="20" class="section" id="F-Top-AW-12" />
-          </g>
-        </g>
-        <!-- Aisle label -->
-        <text x="300" y="15" class="aisle-label">F</text>
-      </g>
-    </svg>
-  </div>
+    <!-- Dynamic Sections Will Go Here -->
+    <g id="aisles"></g>
+  </svg>
 
   <script>
-    async function loadCSV() {
-      const response = await fetch('warehouse_inventory_map.csv');
-      const text = await response.text();
-      const rows = text.split('\n').slice(1);
-      const inventory = rows.map(row => {
-        const [item, aisle, level, section, block] = row.split(',');
-        return { item, aisle, level, section, block };
-      });
-      return inventory;
+    const aisleConfig = {
+      A: { front: 4, back: 9 },
+      B: { front: 4, back: 9 },
+      C: { front: 4, back: 9 },
+      D: { front: 4, back: 12 },
+      E: { front: 4, back: 12 },
+      F: { front: 4, back: 12 },
+      G: { front: 4, back: 12 },
+      H: { front: 4, back: 12 },
+      I: { front: 4, back: 12 },
+      J: { front: 1, back: 0 }
+    };
+
+    const aisleSpacing = 80;
+    const sectionSize = 12;
+    const padding = 2;
+    const svg = document.getElementById("aisles");
+
+    function drawSections() {
+      let index = 0;
+      for (let aisle in aisleConfig) {
+        const { front, back } = aisleConfig[aisle];
+        const x = index * aisleSpacing + 20;
+
+        // Labels
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x);
+        label.setAttribute("y", 20);
+        label.setAttribute("class", "aisle-label");
+        label.textContent = aisle;
+        svg.appendChild(label);
+
+        // FRONT: Top side (before walkway)
+        for (let i = 0; i < front; i++) {
+          ["Left", "Right"].forEach((side, sIndex) => {
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x + sIndex * (sectionSize + padding));
+            rect.setAttribute("y", 40 + i * (sectionSize + padding));
+            rect.setAttribute("width", sectionSize);
+            rect.setAttribute("height", sectionSize);
+            rect.setAttribute("class", "section");
+            rect.setAttribute("id", `${aisle}-Top-BW-${side}-${i + 1}`);
+            svg.appendChild(rect);
+          });
+        }
+
+        // BACK: Bottom side (after walkway)
+        for (let i = 0; i < back; i++) {
+          ["Left", "Right"].forEach((side, sIndex) => {
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x + sIndex * (sectionSize + padding));
+            rect.setAttribute("y", 350 + i * (sectionSize + padding));
+            rect.setAttribute("width", sectionSize);
+            rect.setAttribute("height", sectionSize);
+            rect.setAttribute("class", "section");
+            rect.setAttribute("id", `${aisle}-Top-AW-${side}-${i + 1}`);
+            svg.appendChild(rect);
+          });
+        }
+
+        // Aisle J special case (long single block)
+        if (aisle === 'J') {
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", 100);
+          rect.setAttribute("y", 550);
+          rect.setAttribute("width", 800);
+          rect.setAttribute("height", 30);
+          rect.setAttribute("class", "section");
+          rect.setAttribute("id", "J-Full");
+          svg.appendChild(rect);
+        }
+
+        index++;
+      }
     }
 
     function clearHighlights() {
-      document.querySelectorAll('.section').forEach(el => {
-        el.classList.remove('highlight');
-      });
+      document.querySelectorAll(".section").forEach(el => el.classList.remove("highlight"));
     }
 
-    document.getElementById("searchBox").addEventListener("input", async function () {
-      const query = this.value.trim().toUpperCase();
-      const inventory = await loadCSV();
-      const match = inventory.find(entry => entry.item === query);
+    async function searchItem() {
+      const query = document.getElementById("searchBox").value.trim().toUpperCase();
+      const response = await fetch("warehouse_inventory_map.csv");
+      const text = await response.text();
+      const rows = text.split("\n").slice(1);
+      const data = rows.map(row => {
+        const [code, aisle, level, block, side, section] = row.split(",");
+        return { code, aisle, level, block, side, section };
+      });
 
       const resultBox = document.getElementById("result");
       clearHighlights();
+      const match = data.find(r => r.code === query);
 
       if (match) {
-        const { aisle, level, section, block } = match;
-        if (section && block) {
-          const sectionId = `${aisle}-${level}-${block.trim().replace(/ /g, '')}-${section}`;
-          const el = document.getElementById(sectionId);
-          if (el) el.classList.add("highlight");
-        } else {
-          // highlight whole aisle
-          document.querySelectorAll(`#${aisle} .section`).forEach(el => el.classList.add("highlight"));
-        }
-        resultBox.textContent = `✅ Found: Aisle ${aisle} | Level: ${level}${section ? ` | Section ${section}` : ''}${block ? ` | ${block}` : ''}`;
+        const { aisle, level, block, side, section } = match;
+        const id = (aisle === 'J' || !block || !side || !section)
+          ? (aisle === 'J' ? 'J-Full' : aisle)
+          : `${aisle}-${level}-${block.replace(/ /g, '')}-${side}-${section}`;
+
+        const el = document.getElementById(id);
+        if (el) el.classList.add("highlight");
+
+        resultBox.textContent = `✅ Found: Aisle ${aisle} ${section ? `| Section ${section} ${side}, ${block}` : ''}`;
       } else {
-        resultBox.textContent = query.length > 0 ? "⚠️ Item not found" : "";
+        resultBox.textContent = "⚠️ Item not found";
       }
-    });
+    }
+
+    document.getElementById("searchBox").addEventListener("input", searchItem);
+    drawSections();
   </script>
 </body>
 </html>
