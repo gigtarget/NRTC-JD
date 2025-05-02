@@ -1,26 +1,25 @@
+
 /* Reset */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #fefdfb; /* Light cream background */
+  background: #fefdfb; /* Light soft background */
   color: #222;
 }
 
-/* Container */
 .main-container {
   padding: 20px;
   max-width: 600px;
   margin: auto;
 }
 
-/* Heading */
+/* Title */
 h1 {
   text-align: center;
   font-size: 30px;
-  margin-bottom: 10px;
-  color: #222;
-  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2c2c2c;
 }
 
 /* Card Container */
@@ -33,7 +32,7 @@ h1 {
 
 /* Search */
 .search-wrapper {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .search-bar {
@@ -102,7 +101,7 @@ h1 {
   border-left: 4px solid #ffa726;
 }
 
-/* Map Area */
+/* Map */
 .map-wrapper {
   margin-top: 20px;
   padding: 10px;
@@ -117,7 +116,6 @@ svg {
   height: auto;
 }
 
-/* Sections */
 .section {
   fill: #ffffff;
   stroke: #d32f2f;
@@ -138,14 +136,13 @@ svg {
   stroke-width: 1.4;
 }
 
-/* Aisle Labels */
 .aisle-label {
   font-size: 11px;
   font-weight: bold;
   fill: #333;
 }
 
-/* Feedback Buttons (if any) */
+/* Feedback Buttons */
 .feedback-buttons {
   display: flex;
   gap: 10px;
